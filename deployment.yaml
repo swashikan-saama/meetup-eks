@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
- name: frontenddeployment
+ name: webdeployment
  namespace: development
 spec:
  replicas: 2
@@ -11,17 +11,17 @@ spec:
    env: dev
  template:
   metadata:
-    name: frontendtemp
+    name: webtemp
     labels:
       apptype: web
       env: dev
   spec:
    containers:
    - image: 381743254372.dkr.ecr.us-west-1.amazonaws.com/meetup:frontend
-     name: frontend
+     name: webcon
      imagePullPolicy: Always
      ports:
-     - name: frontendapp
+     - name: apache
        containerPort: 80
        protocol: TCP
      resources:
