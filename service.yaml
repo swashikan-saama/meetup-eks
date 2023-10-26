@@ -4,12 +4,12 @@ metadata:
  name: websvc
  namespace: development
 spec:
- type: LoadBalancer
  ports:
- - name: frontend
+ - name: apache
    port: 80
    targetPort: 80
    protocol: TCP
+ type: LoadBalancer
  selector:
   apptype: web
   env: dev
