@@ -17,8 +17,7 @@ spec:
       env: dev
   spec:
    containers:
-  #  - image: 381743254372.dkr.ecr.us-west-1.amazonaws.com/meetup:{image_tag}
-   - image: sudarshanlnx/2022sundayweb:v1
+   - image: 381743254372.dkr.ecr.us-west-1.amazonaws.com/meetup:{image_tag}
      name: frontendcon
      imagePullPolicy: Always
      ports:
