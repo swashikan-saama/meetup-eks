@@ -13,7 +13,7 @@ spec:
   metadata:
     name: frontend
     labels:
-      apptype: web
+      apptype: frontend
       env: dev
   spec:
    containers:
@@ -47,7 +47,7 @@ spec:
   metadata:
     name: backend
     labels:
-      apptype: web
+      apptype: backend
       env: dev
   spec:
    containers:
