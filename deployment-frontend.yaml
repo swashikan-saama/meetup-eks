@@ -17,7 +17,8 @@ spec:
       env: dev
   spec:
    containers:
-   - image: 381743254372.dkr.ecr.us-west-1.amazonaws.com/meetup:{image_tag}
+  #  - image: 381743254372.dkr.ecr.us-west-1.amazonaws.com/meetup:{image_tag}
+   - image: sudarshanlnx/2022sundayweb:v1
      name: frontendcon
      imagePullPolicy: Always
      ports:
@@ -39,7 +40,40 @@ spec:
    port: 80
    targetPort: 80
    protocol: TCP
- type: LoadBalancer
  selector:
   apptype: frontend
   env: dev
+
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+   name: meetupingress
+   namespace: development
+spec:
+   rules:
+   - host: "meetup-swashikan.airesearch.lsac-dev.com"
+     http:
+       paths:
+       - path: "/"
+         pathType: Prefix
+         backend:
+           service:
+             name: frontendsvc
+             port:
+              number: 80
+---
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+   name: frontendhpa
+   namespace: development
+spec:
+  maxReplicas: 3
+  minReplicas: 1
+  targetCPUUtilizationPercentage: 30
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: frontend
