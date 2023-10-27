@@ -39,30 +39,31 @@ spec:
    port: 80
    targetPort: 80
    protocol: TCP
+   type: LoadBalancer
  selector:
   apptype: frontend
   env: dev
 
 
----
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-   name: meetupingress
-   namespace: development
-spec:
-   rules:
-   - host: "meetup-swashikan.airesearch.lsac-dev.com"
-     http:
-       paths:
-       - path: "/"
-         pathType: Prefix
-         backend:
-           service:
-             name: frontendsvc
-             port:
-              number: 80
----
+# ---
+# apiVersion: networking.k8s.io/v1
+# kind: Ingress
+# metadata:
+#    name: meetupingress
+#    namespace: development
+# spec:
+#    rules:
+#    - host: "meetup-swashikan.airesearch.lsac-dev.com"
+#      http:
+#        paths:
+#        - path: "/"
+#          pathType: Prefix
+#          backend:
+#            service:
+#              name: frontendsvc
+#              port:
+#               number: 80
+# ---
 apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler
 metadata:
