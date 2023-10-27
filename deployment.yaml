@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
- name: webdeployment
+ name: frontend
  namespace: development
 spec:
  replicas: 2
@@ -18,7 +18,7 @@ spec:
   spec:
    containers:
    - image: 381743254372.dkr.ecr.us-west-1.amazonaws.com/meetup:frontend
-     name: frontend
+     name: frontendcon
      imagePullPolicy: Always
      ports:
      - name: frontendport
@@ -52,7 +52,7 @@ spec:
   spec:
    containers:
    - image: 381743254372.dkr.ecr.us-west-1.amazonaws.com/meetup:backend
-     name: backend
+     name: backendcon
      imagePullPolicy: Always
      ports:
      - name: backendport
