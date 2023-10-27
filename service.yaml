@@ -9,8 +9,8 @@ spec:
    port: 80
    targetPort: 80
    protocol: TCP
-   nodePort: 3222
- type: nodePort
+   nodePort: 30500
+ type: NodePort
  selector:
   apptype: frontend
   env: dev
@@ -28,7 +28,7 @@ spec:
    port: 9001
    targetPort: 9001
    protocol: TCP
-   nodePort: 3111
+   nodePort: 30600
  type: NodePort
  selector:
   apptype: backend
