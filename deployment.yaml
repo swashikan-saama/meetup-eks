@@ -58,7 +58,7 @@ spec:
      imagePullPolicy: Always
      ports:
      - name: backendport
-       containerPort: 80
+       containerPort: 9001
        protocol: TCP
      resources:
        requests:
