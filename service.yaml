@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Service
 metadata:
- name: websvc
+ name: frontendsvc
  namespace: development
 spec:
  ports:
@@ -9,15 +9,17 @@ spec:
    port: 80
    targetPort: 80
    protocol: TCP
- type: NodePort
+ type: LoadBalancer
  selector:
   apptype: frontend
   env: dev
 
+---
+
 apiVersion: v1
 kind: Service
 metadata:
- name: websvc
+ name: backendsvc
  namespace: development
 spec:
  ports:
@@ -25,7 +27,7 @@ spec:
    port: 80
    targetPort: 80
    protocol: TCP
- type: NodePort
+ type: LoadBalancer
  selector:
   apptype: backend
   env: dev
