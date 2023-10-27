@@ -32,10 +32,12 @@ spec:
          memory: "300Mi"
          cpu: "400m"
 
+---
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
- name: webdeployment
+ name: backend
  namespace: development
 spec:
  replicas: 2
