@@ -9,7 +9,23 @@ spec:
    port: 80
    targetPort: 80
    protocol: TCP
- type: LoadBalancer
+ type: NodePort
  selector:
-  apptype: web
+  apptype: frontend
+  env: dev
+
+apiVersion: v1
+kind: Service
+metadata:
+ name: websvc
+ namespace: development
+spec:
+ ports:
+ - name: apache
+   port: 80
+   targetPort: 80
+   protocol: TCP
+ type: NodePort
+ selector:
+  apptype: backend
   env: dev

@@ -7,21 +7,55 @@ spec:
  replicas: 2
  selector:
   matchLabels:
-   apptype: web
+   apptype: frontend
    env: dev
  template:
   metadata:
-    name: webtemp
+    name: frontend
     labels:
       apptype: web
       env: dev
   spec:
    containers:
    - image: 381743254372.dkr.ecr.us-west-1.amazonaws.com/meetup:frontend
-     name: webcon
+     name: frontend
      imagePullPolicy: Always
      ports:
-     - name: apache
+     - name: frontendport
+       containerPort: 80
+       protocol: TCP
+     resources:
+       requests:
+        memory: "200Mi"
+        cpu: "200m"
+       limits:
+         memory: "300Mi"
+         cpu: "400m"
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+ name: webdeployment
+ namespace: development
+spec:
+ replicas: 2
+ selector:
+  matchLabels:
+   apptype: backend
+   env: dev
+ template:
+  metadata:
+    name: backend
+    labels:
+      apptype: web
+      env: dev
+  spec:
+   containers:
+   - image: 381743254372.dkr.ecr.us-west-1.amazonaws.com/meetup:backend
+     name: backend
+     imagePullPolicy: Always
+     ports:
+     - name: backendport
        containerPort: 80
        protocol: TCP
      resources:
