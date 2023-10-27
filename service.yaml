@@ -7,6 +7,7 @@ spec:
  ports:
  - name: apache
    port: 80
+   targetPort: 80
    protocol: TCP
  type: LoadBalancer
  selector:
@@ -24,6 +25,7 @@ spec:
  ports:
  - name: apache
    port: 9001
+   targetPort: 9001
    protocol: TCP
  type: LoadBalancer
  selector:
