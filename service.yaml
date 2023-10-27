@@ -9,7 +9,7 @@ spec:
    port: 80
    targetPort: 80
    protocol: TCP
- type: LoadBalancer
+ type: NodePort
  selector:
   apptype: frontend
   env: dev
@@ -27,7 +27,7 @@ spec:
    port: 9001
    targetPort: 9001
    protocol: TCP
- type: LoadBalancer
+ type: NodePort
  selector:
   apptype: backend
   env: dev
