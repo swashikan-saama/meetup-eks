@@ -1,0 +1,274 @@
+pipeline {
+    agent {
+    kubernetes {
+        defaultContainer 'code-builder'
+        yaml '''
+apiVersion: v1
+kind: Pod
+metadata:
+  name: jenkins-test
+spec:
+  containers:
+  - name: code-builder
+    image: 791532114280.dkr.ecr.us-east-1.amazonaws.com/lsac-platform:ubuntu_4_gh
+    resources:
+        limits:
+          cpu: "300m"
+          memory: "12Gi"
+        requests:
+          cpu: "200m"
+          memory: "8Gi"
+    workingDir: /home/jenkins/agent/
+    command:
+    - cat
+    tty: true
+    volumeMounts:
+      - mountPath: "/mnt/"
+        name: "workspace-volume"
+        readOnly: false
+        '''
+        
+        }
+    }
+    
+    parameters {
+        string(
+            name: 'PR_raise', 
+            defaultValue: "yes",
+            description: 'Provide your input')
+        extendedChoice(name: 'Component', multiSelectDelimiter: ',', quoteValue: false, 
+                       type: 'PT_CHECKBOX', 
+                       description: 'Select the Component', 
+                       visibleItemCount: 10,
+                       groovyScript: '''
+                       return ['lsac_sso', 'lsac_ka', 'lsac_event_mgmt', 'lsac_home_service', 'lsac_audit_service', 'lsac_task_service', 'lsac_business_admin', 'lsac_notification_service', 'lsac_outbound', 'All',]
+                       '''
+        )
+        string(
+            name: 'branch_name', 
+            defaultValue: "PLATFORM-2023R2",
+            description: 'Provide the branchname')
+        string(
+            name: 'sso_commitid', 
+            defaultValue: "",
+            description: 'Provide the commitid')
+        string(
+            name: 'ka_commitid', 
+            defaultValue: "",
+            description: 'Provide the commitid')
+        string(
+            name: 'event_commitid', 
+            defaultValue: "",
+            description: 'Provide the commitid')
+        string(
+            name: 'home_core_commitid', 
+            defaultValue: "",
+            description: 'Provide the commitid')
+        string(
+            name: 'home_gateway_commitid', 
+            defaultValue: "",
+            description: 'Provide the commitid')
+        string(
+            name: 'home_ui_commitid', 
+            defaultValue: "",
+            description: 'Provide the commitid')
+        string(
+            name: 'audit_processor_commitid', 
+            defaultValue: "",
+            description: 'Provide the commitid')
+        string(
+            name: 'audit_s2s_processor_commitid', 
+            defaultValue: "",
+            description: 'Provide the commitid')
+        string(
+            name: 'audit_service_commitid', 
+            defaultValue: "",
+            description: 'Provide the commitid')
+        string(
+            name: 'task_commitid', 
+            defaultValue: "",
+            description: 'Provide the commitid')
+        string(
+            name: 'outbound_ui_commitid', 
+            defaultValue: "",
+            description: 'Provide the commitid')
+        string(
+            name: 'outbound_backend_commitid', 
+            defaultValue: "",
+            description: 'Provide the commitid')
+        string(
+            name: 'admin_commitid', 
+            defaultValue: "",
+            description: 'Provide the commitid')
+        string(
+            name: 'job_commitid', 
+            defaultValue: "",
+            description: 'Provide the commitid')
+        string(
+            name: 'gateway_commitid', 
+            defaultValue: "",
+            description: 'Provide the commitid')
+        string(
+            name: 'notify_processor_commitid', 
+            defaultValue: "",
+            description: 'Provide the commitid')
+        string(
+            name: 'notify_service_commitid', 
+            defaultValue: "",
+            description: 'Provide the commitid')    
+    }
+    environment{
+        fnf_slackToken = credentials('fnf_slackToken')
+        HELM_REPO_URL = 'https://github.com/saamaresearch/platform-devops/'
+        HELM_REPO_BRANCH = 'main'
+        INSTALL_LOC = 'Deployment/SIT2'
+        env = 'lsac-SIT2'
+        values_file = 'values-sit2.yaml'
+        sso_dir = 'lsac-sso'
+        ka_dir = 'lsac-ka'
+        event_mgnt_dir = 'lsac-event-management'
+        home_dir = 'lsac-home-service'
+        audit_service_dir = 'lsac-audit-service'
+        task_dir = 'task-service'
+        outbound_dir = 'lsac-outbound'
+        notify_dir = 'lsac-notification-service'
+        admin_dir = 'lsac-business-admin'
+        lsac_sso_Namespace = 'lsac-sso-sit2'
+        lsac_ka_Namespace = 'lsac-ka-sit2'
+        lsac_event_Namespace = 'lsac-sso-sit2'
+        home_service_Namespace = 'lsac-home-sit2'
+        lsac_audit_Namespace = 'lsac-audit-sit2'
+        lsac_task_Namespace = 'lsac-task-sit2'
+        lsac_outbound_Namespace = 'lsac-outbound-sit2'
+        lsac_notify_Namespace = 'lsac-notify-sit2'
+        lsac_admin_Namespace = "lsac-admin-sit2"
+        credential_id = '791532114280_AWS_CRED'
+        cluster_name = 'lsac-sit-framework'
+        kms_id = 'arn:aws:kms:us-east-1:791532114280:key/767038b5-0ffb-45bd-b518-dd9e8d9222cf'
+        ECR_repo = '791532114280.dkr.ecr.us-east-1.amazonaws.com/lsac-platform'
+        ECR_repo_sso = '791532114280.dkr.ecr.us-east-1.amazonaws.com/lsac-authentication'
+        ECR_repo_ka = '791532114280.dkr.ecr.us-east-1.amazonaws.com/lsac/ka'
+        ECR_repo_event = '791532114280.dkr.ecr.us-east-1.amazonaws.com/lsac-event-mgmt'
+        ECR_repo_home_core = '791532114280.dkr.ecr.us-east-1.amazonaws.com/lsac-home-service-core'
+        ECR_repo_app_gateway = '791532114280.dkr.ecr.us-east-1.amazonaws.com/lsac-app-gateway'
+        ECR_repo_home_ui = '791532114280.dkr.ecr.us-east-1.amazonaws.com/lsac-home-service-ui'
+        ECR_repo_audit_proc = '791532114280.dkr.ecr.us-east-1.amazonaws.com/audit-processor'
+        ECR_repo_audit_service = '791532114280.dkr.ecr.us-east-1.amazonaws.com/audit-service'
+        ECR_repo_audit_s2s_proc = '791532114280.dkr.ecr.us-east-1.amazonaws.com/audit-s2s-processor'
+        ECR_repo_task = '791532114280.dkr.ecr.us-east-1.amazonaws.com/task-service'
+        ECR_repo_outbound_ui = '791532114280.dkr.ecr.us-east-1.amazonaws.com/outbound-frontend'
+        ECR_repo_outbound_backend = '791532114280.dkr.ecr.us-east-1.amazonaws.com/outbound-backend'
+        ECR_repo_admin = '791532114280.dkr.ecr.us-east-1.amazonaws.com/lsac-business-admin'
+        ECR_repo_job = '791532114280.dkr.ecr.us-east-1.amazonaws.com/lsac-job-monitoring'
+        ECR_repo_processor = '791532114280.dkr.ecr.us-east-1.amazonaws.com/lsac-notify-processor'
+        ECR_repo_service = '791532114280.dkr.ecr.us-east-1.amazonaws.com/lsac-notify-service'
+        repo = 'platform-devops'
+        username = 'yuvas73'
+        git_repo = 'saamaresearch'
+        usermail = 'yuvaraja.sudhakar@saama.com'
+        git_Token = credentials('yuvas73_token')
+        
+    }
+    stages {
+        stage("GIT Checkout Helm-chart") {            
+            steps {
+                container('code-builder') {
+                dir ('helm-chart') {
+                    git branch: "${HELM_REPO_BRANCH}",
+                    credentialsId: 'yuvi-github',
+                    url: "${HELM_REPO_URL}"
+                    sh '''
+                    [ -f $INSTALL_LOC/Image_tag_format_$env.txt ] && rm $INSTALL_LOC/Image_tag_format_$env.txt || echo "file not exist"
+date1=$(date +%d_%m_%Y-%H%M)
+echo '
+Date=={{date}}
+##SSO image tag
+DOCKER_IMAGE_TAG_sso={{DOCKER_IMAGE_TAG_sso}}
+##Ka image tag
+DOCKER_IMAGE_TAG_ka={{DOCKER_IMAGE_TAG_ka}}
+##Event image tag
+DOCKER_IMAGE_TAG_event_mgmt={{DOCKER_IMAGE_TAG_event_mgmt}}
+##Home image tag
+DOCKER_IMAGE_TAG_home_core={{DOCKER_IMAGE_TAG_home_core}}
+DOCKER_IMAGE_TAG_home_gateway={{DOCKER_IMAGE_TAG_home_gateway}}
+DOCKER_IMAGE_TAG_home_ui={{DOCKER_IMAGE_TAG_home_ui}}
+##audit image tag
+DOCKER_IMAGE_TAG_audit_processor={{DOCKER_IMAGE_TAG_audit_processor}}
+DOCKER_IMAGE_TAG_audit_s2s_processor={{DOCKER_IMAGE_TAG_audit_s2s_processor}}
+DOCKER_IMAGE_TAG_audit_service={{DOCKER_IMAGE_TAG_audit_service}}
+##Task image tag
+DOCKER_IMAGE_TAG_task={{DOCKER_IMAGE_TAG_task}}
+##Business Admin image tag
+DOCKER_IMAGE_TAG_admin={{DOCKER_IMAGE_TAG_admin}}
+DOCKER_IMAGE_TAG_job={{DOCKER_IMAGE_TAG_job}}
+DOCKER_IMAGE_TAG_gateway={{DOCKER_IMAGE_TAG_gateway}}
+##Notification image tag
+DOCKER_IMAGE_TAG_notification_service={{DOCKER_IMAGE_TAG_notification_service}}
+DOCKER_IMAGE_TAG_notification_processor={{DOCKER_IMAGE_TAG_notification_processor}}
+##Outbound image tag
+DOCKER_IMAGE_TAG_outbound_dm={{DOCKER_IMAGE_TAG_outbound_dm}}
+DOCKER_IMAGE_TAG_outbound_ui={{DOCKER_IMAGE_TAG_outbound_ui}}
+                ' > Image_tag_format.txt
+                mv Image_tag_format.txt $INSTALL_LOC/Image_tag_format_$env.txt
+                sed -ibk "s|{{date}}|$date1|g" $INSTALL_LOC/Image_tag_format_$env.txt
+echo '
+Description:
+Update RDS hostname and backupplan name for Framework environment
+Mandatory Reviewers:
+@yuvas73
+Optional Reviewers and Notifications:
+Related Task[s]:
+Tests:
+None
+Known Issues:
+None
+Follow-up Work:
+None
+' > $INSTALL_LOC/body.txt
+                '''
+                    }
+                }
+            }
+        }
+        stage('SSO Deployment'){
+            when {
+                expression { params.Component.contains('lsac_sso') ||  params.Component.contains('All') }
+                }
+            steps {
+                container('code-builder') {
+                withCredentials([[
+                    $class: 'AmazonWebServicesCredentialsBinding',
+                    credentialsId: "791532114280_AWS_CRED",
+                    accessKeyVariable: 'AWS_ACCESS_KEY_ID',
+                    secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
+                ]]) {
+                sh "aws eks --region us-east-1 update-kubeconfig --name $cluster_name"
+                dir ('helm-chart') {
+                    script {
+                        sh '''
+                        echo $sso_commitid
+                        echo ${branch_name}
+                        DOCKER_IMAGE_TAG_sso=$(echo $sso_commitid | cut -c1-5)
+                        #IMAGE_TAG_sso=$DOCKER_IMAGE_TAG_sso
+                        NAMESPACE=$lsac_sso_Namespace
+                        cd $INSTALL_LOC/$sso_dir
+                        if [ -z "$DOCKER_IMAGE_TAG_sso" ]; then
+                            echo "###################################################################"
+                            echo "Warning####Not provided the input..So taking the input of current pod image####"
+                            IMAGE_TAG_sso=$(kubectl describe statefulset -n  $NAMESPACE | grep Image | awk '{print $2}' | grep sso | awk -F':' '{print $2}')                                
+                        else
+                           IMAGE_TAG_sso=$(aws ecr describe-images --repository-name lsac-platform --query 'sort_by(imageDetails,& imagePushedAt)[*].imageTags[0]' --output yaml | awk -F'- ' '{print $2}' | grep sso-${branch_name}-$DOCKER_IMAGE_TAG_sso | tail -n 1)                           
+                           if [ -z "$IMAGE_TAG_sso" ]; then
+                                echo "###################################################################"
+                               echo "###Entered Commit-id is not exist. Kindly check the commit id####"
+                               echo "###################################################################"
+                               IMAGE_TAG_sso=$(kubectl describe statefulset -n  $NAMESPACE | grep Image | awk '{print $2}' | grep sso | awk -F':' '{print $2}') 
+                           else
+                                echo $IMAGE_TAG_sso
+                                echo "Image tag:######$IMAGE_TAG_sso:#########"
+                                aws ecr get-login-password --region us-east-1 | podman login --username AWS --password-stdin 791532114280.dkr.ecr.us-east-1.amazonaws.com
+                                image_exist_sso=$(aws ecr describe-images --repository-name lsac-authentication --query 'sort_by(imageDetails,& imagePushedAt)[*].imageTags[0]' --output yaml | awk -F'- ' '{print $2}' | grep $IMAGE_TAG_sso | tail -n 1)
+                                if [ -z "$image_exist_sso" ]; then
+                                    podman pull $ECR_repo:$IMAGE_TAG_sso
+                                    podman tag $ECR_repo:$IMAGE_TAG_sso $ECR_repo_sso:$IMAGE_TAG_sso
+                     ...

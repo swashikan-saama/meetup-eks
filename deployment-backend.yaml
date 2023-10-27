@@ -1,0 +1,45 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+ name: backend
+ namespace: development
+spec:
+ replicas: 2
+ selector:
+  matchLabels:
+   apptype: backend
+   env: dev
+ template:
+  metadata:
+    name: backend
+    labels:
+      apptype: backend
+      env: dev
+  spec:
+   containers:
+   - image: 381743254372.dkr.ecr.us-west-1.amazonaws.com/meetup:{image_tag}
+     name: backendcon
+     imagePullPolicy: Always
+     ports:
+     - name: backendport
+       containerPort: 9001
+       protocol: TCP
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+ name: backendsvc
+ namespace: development
+spec:
+ ports:
+ - name: backendport
+   port: 9001
+   targetPort: 9001
+   protocol: TCP
+ type: LoadBalancer
+ selector:
+  apptype: backend
+  env: dev

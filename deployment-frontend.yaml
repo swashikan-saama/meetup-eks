@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+ name: frontend
+ namespace: development
+spec:
+ replicas: 2
+ selector:
+  matchLabels:
+   apptype: frontend
+   env: dev
+ template:
+  metadata:
+    name: frontend
+    labels:
+      apptype: frontend
+      env: dev
+  spec:
+   containers:
+   - image: 381743254372.dkr.ecr.us-west-1.amazonaws.com/meetup:{image_tag}
+     name: frontendcon
+     imagePullPolicy: Always
+     ports:
+     - name: frontendport
+       containerPort: 80
+       protocol: TCP
+
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+ name: frontendsvc
+ namespace: development
+spec:
+ ports:
+ - name: frontendport
+   port: 80
+   targetPort: 80
+   protocol: TCP
+ type: LoadBalancer
+ selector:
+  apptype: frontend
+  env: dev
