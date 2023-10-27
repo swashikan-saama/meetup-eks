@@ -8,7 +8,7 @@ spec:
  - name: apache
    port: 80
    protocol: TCP
- type: NodePort
+ type: LoadBalancer
  selector:
   apptype: frontend
   env: dev
@@ -25,7 +25,7 @@ spec:
  - name: apache
    port: 9001
    protocol: TCP
- type: NodePort
+ type: LoadBalancer
  selector:
   apptype: backend
   env: dev
