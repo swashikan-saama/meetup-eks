@@ -47,16 +47,24 @@ spec:
 ---
 
 
-apiVersion: autoscaling/v1
+apiVersion: autoscaling/v2beta1
 kind: HorizontalPodAutoscaler
 metadata:
-   name: backendhpa
-   namespace: development
+  name: backendhpa
+  namespace: development
 spec:
-  maxReplicas: 3
-  minReplicas: 1
-  targetCPUUtilizationPercentage: 7
   scaleTargetRef:
-    apiVersion: apps/v1
+    apiVersion: extensions/v1beta1
     kind: Deployment
     name: backend-deployment
+  minReplicas: 1
+  maxReplicas: 10
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      targetAverageUtilization: 7
+  - type: Resource
+    resource:
+      name: memory
+      targetAverageValue: 100Mi
