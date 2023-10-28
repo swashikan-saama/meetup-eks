@@ -1,45 +1,55 @@
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
- name: backend
- namespace: development
+  name: backend-deployment
+  namespace: development
+  labels:
+    app: backend
 spec:
- replicas: 2
- selector:
-  matchLabels:
-   apptype: backend
-   env: dev
- template:
-  metadata:
-    name: backend
-    labels:
-      apptype: backend
-      env: dev
-  spec:
-   containers:
-   - image: 381743254372.dkr.ecr.us-west-1.amazonaws.com/meetup:{image_tag}
-     name: backendcon
-     imagePullPolicy: Always
-     ports:
-     - name: backendport
-       containerPort: 9001
-       protocol: TCP
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+      - name: backend
+        image: 381743254372.dkr.ecr.us-west-1.amazonaws.com/meetup:{image_tag}
+        ports:
+        - containerPort: 9001
 
 ---
 
 apiVersion: v1
 kind: Service
 metadata:
- name: backendsvc
- namespace: development
+  name: backend-service-loadbalancer
+  namespace: development
 spec:
- ports:
- - name: backendport
-   port: 9001
-   targetPort: 9001
-   protocol: TCP
- type: LoadBalancer
- selector:
-  apptype: backend
-  env: dev
+  type: LoadBalancer
+  selector:
+    app: backend
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 9001
+
+---
+
+
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+   name: backendhpa
+   namespace: development
+spec:
+  maxReplicas: 3
+  minReplicas: 1
+  targetCPUUtilizationPercentage: 30
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: backend-deployment
