@@ -59,8 +59,4 @@ spec:
     name: backend-deployment
   minReplicas: 1
   maxReplicas: 5
-  metrics:
-  - type: Resource
-    resource:
-      name: cpu
-      targetAverageUtilization: 1
+  targetCPUUtilizationPercentage: 1
