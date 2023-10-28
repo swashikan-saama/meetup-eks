@@ -48,7 +48,7 @@ metadata:
 spec:
   maxReplicas: 3
   minReplicas: 1
-  targetCPUUtilizationPercentage: 30
+  targetCPUUtilizationPercentage: 7
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
