@@ -36,6 +36,13 @@ spec:
     - protocol: TCP
       port: 80
       targetPort: 80
+      resources:
+        requests:
+          memory: "200Mi"
+          cpu: "200m"
+        limits:
+          memory: "300Mi"
+          cpu: "400m"
 
 ---
 

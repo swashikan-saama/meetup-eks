@@ -20,6 +20,13 @@ spec:
         image: 381743254372.dkr.ecr.us-west-1.amazonaws.com/meetup:{image_tag}
         ports:
         - containerPort: 9001
+        resources:
+          requests:
+            memory: "200Mi"
+            cpu: "200m"
+          limits:
+            memory: "300Mi"
+            cpu: "400m"
 
 ---
 
